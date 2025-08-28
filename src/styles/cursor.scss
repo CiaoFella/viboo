@@ -11,7 +11,7 @@
   mix-blend-mode: exclusion;
 
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     top: -24px;
     left: -24px;
@@ -24,16 +24,18 @@
     transition: transform 0.3s ease-in-out, opacity 0.1s;
   }
 
-  &.-normal, &.-text {
+  &.-normal,
+  &.-text {
     color: white;
 
-    .cb-cursor-text{
+    .cb-cursor-text {
       padding: 5px;
       color: black;
     }
   }
 
-  &.-normal:before, .cb-cursor.-text:before {
+  &.-normal:before,
+  .cb-cursor.-text:before {
     background: currentColor;
   }
 
@@ -107,12 +109,14 @@
 }
 
 @supports (mix-blend-mode: exclusion) {
-  .cb-cursor.-exclusion, .cb-cursor.-opaque {
+  .cb-cursor.-exclusion,
+  .cb-cursor.-opaque {
     mix-blend-mode: exclusion;
   }
 }
 @supports (mix-blend-mode: exclusion) {
-  .cb-cursor.-exclusion:before, .cb-cursor.-opaque:before {
+  .cb-cursor.-exclusion:before,
+  .cb-cursor.-opaque:before {
     background: white;
   }
 }

@@ -1,9 +1,10 @@
 import gsap from 'gsap'
+import SplitText from 'gsap/SplitText.js'
 import ScrollTrigger from 'gsap/ScrollTrigger.js'
 import Flip from 'gsap/Flip.js'
 import MotionPathPlugin from 'gsap/MotionPathPlugin.js'
+import DrawSVGPlugin from 'gsap/DrawSVGPlugin.js'
 import barba from '@barba/core'
-import SplitType from 'split-type'
 import LocomotiveScroll from 'locomotive-scroll'
 
 gsap.defaults({
@@ -11,6 +12,6 @@ gsap.defaults({
   duration: 1,
 })
 
-gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, Flip)
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, Flip, DrawSVGPlugin)
 
-export { gsap, ScrollTrigger, MotionPathPlugin, barba, SplitType, LocomotiveScroll, Flip }
+export { gsap, ScrollTrigger, MotionPathPlugin, barba, LocomotiveScroll, Flip, SplitText, DrawSVGPlugin }
