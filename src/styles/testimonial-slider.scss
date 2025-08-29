@@ -1,0 +1,102 @@
+/* ------------ Swiper Slider - Setup  ------------ */
+@import '../../node_modules/swiper/swiper.min.css';
+
+[data-anm-testimonial-slider='wrap'] {
+  overflow: hidden;
+  width: 100%;
+}
+
+[data-anm-testimonial-slider='wrap'] .swiper-wrapper {
+  display: flex;
+}
+
+[data-anm-testimonial-slider='wrap'] .swiper-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* Navigation arrows disabled state */
+[data-anm-testimonial-slider='arrow'].swiper-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Pagination bullets */
+.testimonials_slider_bullets_point {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.testimonials_slider_bullets_point--active {
+  background-color: #131313;
+}
+
+/* ------------ Flickity Slider - Cards  ------------ */
+
+/* Desktop */
+@media screen and (min-width: 992px) {
+  [data-flickity-type='cards'] {
+    --flick-col: 3;
+    --flick-gap: 2em;
+  }
+  /* Turn Flickity OFF & Hide Controls */
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2'], [data-flickity-count='3'])
+    [data-flickity-list]::after {
+    content: '';
+    display: block;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2'], [data-flickity-count='3'])
+    [data-flickity-list] {
+    display: flex;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2'], [data-flickity-count='3'])
+    [data-flickity-controls] {
+    display: none;
+  }
+  [data-flickity-type='cards'] [data-flickity-dot]:nth-last-child(-n + 2) {
+    display: none;
+  } /* Hide last two dots */
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+  [data-flickity-type='cards'] {
+    --flick-col: 2.5;
+    --flick-gap: 1.5em;
+  }
+  /* Turn Flickity OFF & Hide Controls */
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2']) [data-flickity-list]::after {
+    content: '';
+    display: block;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2']) [data-flickity-list] {
+    display: flex;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1'], [data-flickity-count='2']) [data-flickity-controls] {
+    display: none;
+  }
+  [data-flickity-type='cards'] [data-flickity-dot]:nth-last-child(1) {
+    display: none;
+  } /* Hide last dot */
+}
+
+/* Mobile */
+@media screen and (max-width: 767px) {
+  [data-flickity-type='cards'] {
+    --flick-col: 1.5;
+    --flick-gap: 1em;
+  }
+  /* Turn Flickity OFF & Hide Controls */
+  [data-flickity-type='cards']:is([data-flickity-count='1']) [data-flickity-list]::after {
+    content: '';
+    display: block;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1']) [data-flickity-list] {
+    display: flex;
+  }
+  [data-flickity-type='cards']:is([data-flickity-count='1']) [data-flickity-controls] {
+    display: none;
+  }
+}

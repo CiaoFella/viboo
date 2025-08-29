@@ -6,6 +6,8 @@ import MotionPathPlugin from 'gsap/MotionPathPlugin.js'
 import DrawSVGPlugin from 'gsap/DrawSVGPlugin.js'
 import barba from '@barba/core'
 import LocomotiveScroll from 'locomotive-scroll'
+import Swiper from 'swiper'
+import { Navigation, Pagination } from 'swiper/modules'
 
 gsap.defaults({
   ease: 'power2.inOut',
@@ -14,4 +16,16 @@ gsap.defaults({
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, Flip, DrawSVGPlugin)
 
-export { gsap, ScrollTrigger, MotionPathPlugin, barba, LocomotiveScroll, Flip, SplitText, DrawSVGPlugin }
+export {
+  gsap,
+  ScrollTrigger,
+  MotionPathPlugin,
+  barba,
+  LocomotiveScroll,
+  Flip,
+  SplitText,
+  DrawSVGPlugin,
+  Swiper,
+  Navigation,
+  Pagination,
+}

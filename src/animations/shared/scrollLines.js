@@ -11,9 +11,10 @@ function init() {
     fillElements.forEach(fillElement => {
       const tagName = fillElement.tagName.toLowerCase()
 
+      gsap.set(fillElement, { visibility: 'visible' })
+
       // Skip non-drawable elements like groups
       if (tagName === 'g' || tagName === 'svg') {
-        console.log('Skipping non-drawable element:', fillElement)
         return
       }
 
@@ -78,10 +79,6 @@ function init() {
           drawSVG: toState,
           duration: 1,
           ease: 'none',
-          onStart: () => {
-            // Debug: log the path length calculation
-            console.log('Animating element:', fillElement, 'Path length detected:', fillElement.getTotalLength?.())
-          },
         }
       )
 
