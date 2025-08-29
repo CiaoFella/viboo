@@ -1,8 +1,26 @@
+@import '../../node_modules/swiper/swiper.min.css';
 @import './enterPage.scss';
 @import './detail.scss';
 @import './home.scss';
 @import './cursor.scss';
 @import './testimonial-slider.scss';
+
+// Calculator range slider styles
+.g_range_slider_wrap {
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--_theme---text);
+    border-radius: 1px;
+    width: var(--slider-progress, 0%);
+    transition: width 0s ease;
+  }
+}
 
 .is-animating {
   position: fixed;

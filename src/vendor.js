@@ -6,6 +6,7 @@ import MotionPathPlugin from 'gsap/MotionPathPlugin.js'
 import DrawSVGPlugin from 'gsap/DrawSVGPlugin.js'
 import barba from '@barba/core'
 import LocomotiveScroll from 'locomotive-scroll'
+import flickity from 'flickity'
 import Swiper from 'swiper'
 import { Navigation, Pagination } from 'swiper/modules'
 
@@ -25,6 +26,7 @@ export {
   Flip,
   SplitText,
   DrawSVGPlugin,
+  flickity,
   Swiper,
   Navigation,
   Pagination,
