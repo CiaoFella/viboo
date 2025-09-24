@@ -4,6 +4,7 @@
 @import './home.scss';
 @import './cursor.scss';
 @import './testimonial-slider.scss';
+@import './variables.scss';
 
 // Calculator range slider styles
 .g_range_slider_wrap {
@@ -58,4 +59,22 @@ html.lenis body {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+/* Logo Carousel */
+
+[data-anm-logo-carousel='wrap'] {
+  [data-anm-logo-carousel='overlay'] {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity $transition-duration $transition-ease, visibility $transition-duration $transition-ease;
+  }
+
+  &:hover {
+    [data-anm-logo-carousel='overlay'] {
+      opacity: 1;
+      visibility: visible;
+      display: flex;
+    }
+  }
 }

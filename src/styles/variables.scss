@@ -7,3 +7,6 @@ $topClipPath: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
 $bottomClipPath: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
 $centerHorizontalPath: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
 $fullclipPath: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+
+$transition-duration: 0.3s;
+$transition-ease: cubic-bezier(0.25, 0.1, 0.25, 1);

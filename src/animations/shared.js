@@ -3,6 +3,7 @@ import hero from './shared/hero.js'
 import scrollLines from './shared/scrollLines.js'
 import testimonialSlider from './shared/testimonialSlider.js'
 import calculator from './shared/calculator.js'
+import logoCarousel from './shared/logoCarousel.js'
 
 function init() {
   hero.init()
@@ -10,6 +11,7 @@ function init() {
   scrollLines.init()
   testimonialSlider.init()
   calculator.init()
+  logoCarousel.init()
 }
 
 function cleanup() {
@@ -18,6 +20,7 @@ function cleanup() {
   scrollLines.cleanup()
   testimonialSlider.cleanup()
   calculator.cleanup()
+  logoCarousel.cleanup()
 }
 
 export default {
