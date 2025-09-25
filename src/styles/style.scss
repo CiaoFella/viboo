@@ -78,3 +78,41 @@ html.lenis body {
     }
   }
 }
+
+/* Navbar */
+
+[data-anm-navbar='navbar'] {
+  scale: 1;
+  transform-origin: top center;
+  transition: transform $transition-duration $ease-power2-inOut, scale $transition-duration $ease-power2-inOut;
+
+  &.is-hidden {
+    transform: translateY(-200%);
+    scale: 0.95;
+  }
+}
+
+[data-anm-navbar='container'],
+[data-anm-navbar='mobile-container'] {
+  background-color: var(--_theme---background);
+  transition: background-color $transition-duration-slower $ease-power2-inOut,
+    color $transition-duration-slower $ease-power2-inOut, backdrop-filter $transition-duration-slower $ease-power2-inOut,
+    max-width $transition-duration-slower $ease-power2-inOut !important;
+
+  &.is-transparent {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
+
+  &.is-home-transparent {
+    color: var(--_theme---background);
+  }
+}
+
+[data-anm-logo='logo'] {
+  transition: transform $transition-duration-slower $ease-power2-inOut;
+
+  &.is-small {
+    transform: scale(0.8);
+  }
+}

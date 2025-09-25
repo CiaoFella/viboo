@@ -8,5 +8,41 @@ $bottomClipPath: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
 $centerHorizontalPath: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
 $fullclipPath: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 
-$transition-duration: 0.3s;
+// Transition Durations
+$transition-duration: 0.4s;
+$transition-duration-fast: 0.2s;
+$transition-duration-slow: 0.6s;
+$transition-duration-slower: 0.8s;
+
+// Easing Functions
 $transition-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+// Power easings (similar to GSAP)
+$ease-power1-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+$ease-power1-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+$ease-power1-inOut: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+$ease-power2-in: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+$ease-power2-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-power2-inOut: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+
+$ease-power3-in: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+$ease-power3-out: cubic-bezier(0.165, 0.84, 0.44, 1);
+$ease-power3-inOut: cubic-bezier(0.77, 0, 0.175, 1);
+
+$ease-power4-in: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+$ease-power4-out: cubic-bezier(0.19, 1, 0.22, 1);
+$ease-power4-inOut: cubic-bezier(0.86, 0, 0.07, 1);
+
+// Back easings
+$ease-back-in: cubic-bezier(0.36, 0, 0.66, -0.56);
+$ease-back-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+$ease-back-inOut: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+// Elastic easings (approximated)
+$ease-elastic-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-elastic-inOut: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// Bounce easings (approximated)
+$ease-bounce-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$ease-bounce-inOut: cubic-bezier(0.68, -0.55, 0.265, 1.55);
