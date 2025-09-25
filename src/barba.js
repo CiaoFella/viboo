@@ -20,17 +20,35 @@ barba.init({
   preventRunning: false,
   transitions: [
     {
-      name: 'default-transition',
-      sync: true,
-      leave(data) {
-        const done = this.async()
+      name: 'fade-transition',
+      async leave(data) {
         proxy.pageReady = false
         closeMenu()
+
+        // Fade out current container
+        await gsap.to(data.current.container, {
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.inOut',
+        })
+      },
+      async enter(data) {
+        // Set initial state for new container
+        gsap.set(data.next.container, {
+          opacity: 0,
+        })
+
+        // Fade in new container
+        await gsap.to(data.next.container, {
+          opacity: 1,
+          duration: 0.4,
+          ease: 'power2.inOut',
+        })
       },
       after(data) {
         mm.add(isDesktop, () => {
           const customCursor = document.querySelector('.cb-cursor')
-          customCursor.remove()
+          if (customCursor) customCursor.remove()
           cursor.init()
           magneticCursor()
         })

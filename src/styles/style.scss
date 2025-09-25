@@ -95,9 +95,8 @@ html.lenis body {
 [data-anm-navbar='container'],
 [data-anm-navbar='mobile-container'] {
   background-color: var(--_theme---background);
-  transition: background-color $transition-duration-slower $ease-power2-inOut,
-    color $transition-duration-slower $ease-power2-inOut, backdrop-filter $transition-duration-slower $ease-power2-inOut,
-    max-width $transition-duration-slower $ease-power2-inOut !important;
+  transition: background-color $transition-duration $ease-power2-inOut, color $transition-duration $ease-power2-inOut,
+    backdrop-filter $transition-duration $ease-power2-inOut, max-width $transition-duration $ease-power2-inOut !important;
 
   &.is-transparent {
     background-color: transparent;
@@ -107,10 +106,43 @@ html.lenis body {
   &.is-home-transparent {
     color: var(--_theme---background);
   }
+
+  &.is-light {
+    color: var(--_theme---background);
+
+    // Only affect top-level navbar elements, not dropdowns
+    .nav_links_text,
+    .button_main_text {
+      color: var(--_theme---background);
+    }
+
+    // Explicitly preserve original colors for dropdown content
+    .nav_dropdown_main_wrap,
+    .nav_dropdown_mega_wrap {
+      color: var(--_theme---text);
+
+      .nav_dropdown_text,
+      .nav_dropdown_mega_headline,
+      p {
+        color: var(--_theme---text);
+      }
+    }
+
+    // Set mega menu background to dark when navbar is light
+    .nav_dropdown_mega_content {
+      background-color: var(--_theme---text);
+    }
+
+    // Style logos/icons for dark backgrounds if needed
+    .nav_desktop_logo,
+    .nav_mobile_logo {
+      // Add any logo color adjustments for dark backgrounds
+    }
+  }
 }
 
 [data-anm-logo='logo'] {
-  transition: transform $transition-duration-slower $ease-power2-inOut;
+  transition: transform $transition-duration $ease-power2-inOut;
 
   &.is-small {
     transform: scale(0.8);
