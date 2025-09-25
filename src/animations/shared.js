@@ -7,6 +7,7 @@ import logoCarousel from './shared/logoCarousel.js'
 import logoMarquee from './shared/logoMarquee.js'
 import videoLightbox from './shared/videoLightbox.js'
 import navbar from './general/navbar.js'
+import accordion from './shared/accordion.js'
 
 function init() {
   hero.init()
@@ -18,6 +19,7 @@ function init() {
   logoMarquee.init()
   videoLightbox.init()
   navbar.init()
+  accordion.init()
 }
 
 function cleanup() {
@@ -30,6 +32,7 @@ function cleanup() {
   logoMarquee.cleanup()
   videoLightbox.cleanup()
   navbar.cleanup()
+  accordion.cleanup()
 }
 
 export default {
