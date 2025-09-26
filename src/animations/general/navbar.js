@@ -261,6 +261,13 @@ class NavbarManager {
     }
   }
 
+  resetToDefaultState() {
+    const targetContainer = this.getTargetContainer()
+    if (targetContainer) {
+      targetContainer.classList.remove('is-light')
+    }
+  }
+
   destroy() {
     // Stop color detection
     this.stopColorDetection()
@@ -292,6 +299,12 @@ function resetNavbarState() {
   }
 }
 
+function resetToDefaultState() {
+  if (navbarManager) {
+    navbarManager.resetToDefaultState()
+  }
+}
+
 function cleanup() {
   // Clean up navbar manager
   if (navbarManager) {
@@ -314,4 +327,5 @@ export default {
   init,
   cleanup,
   resetNavbarState,
+  resetToDefaultState,
 }

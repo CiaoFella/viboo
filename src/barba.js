@@ -1,8 +1,9 @@
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
-import { closeMenu } from './utilities/helper.js'
+import { closeMenu, updateCurrentNavLink } from './utilities/helper.js'
 import { proxy } from './utilities/pageReadyListener.js'
 import { isDesktop } from './utilities/variables.js'
 import { gsap, barba, ScrollTrigger } from './vendor.js'
+import navbar from './animations/general/navbar.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -21,7 +22,11 @@ barba.init({
   transitions: [
     {
       name: 'fade-transition',
+      sync: true,
       async leave(data) {
+        navbar.resetToDefaultState()
+        updateCurrentNavLink()
+
         proxy.pageReady = false
         closeMenu()
 
@@ -29,7 +34,7 @@ barba.init({
         await gsap.to(data.current.container, {
           opacity: 0,
           duration: 0.4,
-          ease: 'power2.inOut',
+          ease: 'power2.out',
         })
       },
       async enter(data) {
@@ -42,7 +47,7 @@ barba.init({
         await gsap.to(data.next.container, {
           opacity: 1,
           duration: 0.4,
-          ease: 'power2.inOut',
+          ease: 'power2.in',
         })
       },
       after(data) {

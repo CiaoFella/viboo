@@ -2,7 +2,7 @@ import { gsap, ScrollTrigger } from './vendor.js'
 import barba from './barba.js'
 import menu from './animations/general/menu.js'
 import pageLoader from './animations/general/pageLoader.js'
-import { getCurrentPage, handleResponsiveElements, updateCurrentNavLink } from './utilities/helper.js'
+import { getCurrentPage, handleResponsiveElements } from './utilities/helper.js'
 import utilities from './utilities/index.js'
 import lenis from './utilities/smoothScroll.js'
 import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
@@ -110,7 +110,6 @@ barba.hooks.after(data => {
   const pageName = data.next.namespace
   lenis.scrollTo(0, { duration: 0, immediate: true })
   utilities.init()
-  updateCurrentNavLink()
   loadPageModule(pageName)
   handleResponsiveElements()
 })
