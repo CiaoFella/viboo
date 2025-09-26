@@ -2,41 +2,38 @@ import { gsap } from '../../vendor.js'
 
 let ctx
 
-// Calculation constants and data
+// Calculation constants and data - matching the old calculator exactly
 const CALCULATION_DATA = {
-  // Price per kWh by energy source (CHF/kWh)
-  prices: {
+  // Heating type price values (used as multipliers in energy savings formula)
+  heatingTypes: {
     gas: 0.14,
-    oil: 0.16,
+    oil: 0.11,
     'district-heating': 0.12,
     'heat-pump': 0.08,
   },
 
-  // Energy consumption per m² per year by building period (kWh/m²·a)
-  consumption: {
-    1920: { base: 200, renovated: 140 }, // vor 1920
-    1950: { base: 180, renovated: 125 }, // vor 1950
-    1980: { base: 160, renovated: 110 }, // vor 1980
-    2000: { base: 140, renovated: 95 }, // vor 2000
-    2020: { base: 120, renovated: 80 }, // vor 2020
-    '2020+': { base: 100, renovated: 65 }, // nach 2020
+  // Building age values (energy consumption base values)
+  buildingAge: {
+    1920: 200, // vor 1920
+    1950: 140, // 1920-1950
+    1980: 90, // 1950-1980
+    2000: 70, // 1980-2000
+    2020: 30, // nach 2000
   },
 
-  // viboo constants - adjusted to match expected results
-  viboo: {
-    costPerDevice: 150, // CHF per device
-    devicesPerM2: 0.05, // devices per m²
-    subscriptionPerDevice: 18, // CHF per device per year
-    energySavingsPercent: 0.3, // 30% energy savings
+  // Renovation multipliers
+  renovation: {
+    no: 1, // Nein
+    yes: 0.7, // Ja
   },
 }
 
 // State variables
 let currentInputs = {
-  heatingType: null,
-  buildingPeriod: null,
-  renovated: null,
-  size: 0, // default size
+  heatingType: 0.14, // Default to Gas
+  buildingPeriod: 200, // Default to "Vor 1920"
+  renovated: false, // Default to "Nein"
+  size: 2000, // Default size
 }
 
 // Range slider variables
@@ -45,15 +42,46 @@ let sliderWrap = null
 let sliderCircle = null
 let sliderText = null
 const MIN_SIZE = 0
-const MAX_SIZE = 50000
+const MAX_SIZE = 15000
 
 function init() {
   ctx = gsap.context(() => {
     initializeElements()
     setupRangeSlider()
     setupFormHandlers()
+    initializeFromHTML()
+    updateSliderPosition()
     updateResults()
   })
+}
+
+function initializeFromHTML() {
+  // Initialize size from the HTML input value
+  const rangeInput = document.querySelector('[data-anm-calculator="range-slider-input"]')
+  if (rangeInput && rangeInput.value) {
+    currentInputs.size = parseInt(rangeInput.value) || 2000
+  }
+
+  // Set default selections in the HTML
+  // Select Gas (0.14) as default heating type
+  const gasRadio = document.querySelector('input[name="heating-type"][value="0.14"]')
+  if (gasRadio) {
+    gasRadio.checked = true
+  }
+
+  // Select "vor 1920" (200) as default building age
+  const selectElement = document.querySelector('[data-anm-calculator="select"]')
+  if (selectElement) {
+    selectElement.value = "200"
+  }
+
+  // Select "Nein" as default for renovation
+  const noRenovationRadio = document.querySelector('input[name="last-10-years"][value="no"]')
+  if (noRenovationRadio) {
+    noRenovationRadio.checked = true
+  }
+
+  console.log('Initialized with defaults - Gas, vor 1920, Nein, size:', currentInputs.size)
 }
 
 function initializeElements() {
@@ -128,18 +156,23 @@ function updateSliderValue(percentage) {
   currentInputs.size = size
 
   updateSliderPosition()
+  updateNumberInput()
   updateResults()
 }
 
 function updateSliderPosition() {
-  if (!sliderCircle || !sliderText || !sliderWrap) return
+  if (!sliderCircle || !sliderWrap) return
 
   const percentage = (currentInputs.size - MIN_SIZE) / (MAX_SIZE - MIN_SIZE)
   const position = percentage * 100
 
   gsap.set(sliderCircle, { left: `${position}%` })
   sliderWrap.style.setProperty('--slider-progress', `${position}%`)
-  sliderText.textContent = currentInputs.size.toLocaleString('de-CH')
+
+  // Update text if it exists (optional)
+  if (sliderText) {
+    sliderText.textContent = currentInputs.size.toLocaleString('de-CH')
+  }
 }
 
 function setupFormHandlers() {
@@ -154,6 +187,13 @@ function setupFormHandlers() {
   if (selectElement) {
     selectElement.addEventListener('change', handleSelectChange)
   }
+
+  // Range slider input handler (number input)
+  const rangeInput = document.querySelector('[data-anm-calculator="range-slider-input"]')
+  if (rangeInput) {
+    rangeInput.addEventListener('input', handleRangeInputChange)
+    rangeInput.addEventListener('change', handleRangeInputChange)
+  }
 }
 
 function handleRadioChange(e) {
@@ -161,7 +201,8 @@ function handleRadioChange(e) {
   const value = e.target.value
 
   if (name === 'heating-type') {
-    currentInputs.heatingType = value
+    // Store the heating type value directly as it appears in the old calculator
+    currentInputs.heatingType = parseFloat(value)
   } else if (name === 'last-10-years') {
     currentInputs.renovated = value === 'yes'
   }
@@ -170,63 +211,77 @@ function handleRadioChange(e) {
 }
 
 function handleSelectChange(e) {
+  // Store the age value directly as it appears in the old calculator
   currentInputs.buildingPeriod = e.target.value
   updateResults()
+}
+
+function handleRangeInputChange(e) {
+  // Handle the new number input for building size
+  const value = parseInt(e.target.value) || 0
+  currentInputs.size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, value)) // Enforce min/max limits
+
+  // Update the visual slider position to match
+  updateSliderPosition()
+  updateResults()
+}
+
+function updateNumberInput() {
+  // Update the number input to match the slider value
+  const rangeInput = document.querySelector('[data-anm-calculator="range-slider-input"]')
+  if (rangeInput) {
+    rangeInput.value = currentInputs.size
+  }
 }
 
 function calculateResults() {
   const { heatingType, buildingPeriod, renovated, size } = currentInputs
 
   // Use default values for missing inputs to allow partial calculations
-  const defaultHeatingType = heatingType || 'gas'
-  const defaultBuildingPeriod = buildingPeriod || '1980'
+  const defaultHeatingType = heatingType || 0.14
+  const defaultBuildingPeriod = buildingPeriod || 200
   const defaultRenovated = renovated !== null ? renovated : false
 
-  // Get price per kWh
-  const pricePerKWh = CALCULATION_DATA.prices[defaultHeatingType] || 0.14
+  // Get values exactly as in the old calculator
+  const heatingTypeValue = defaultHeatingType
+  const ageValue = parseInt(defaultBuildingPeriod)
+  const retrofitValue = defaultRenovated ? 0.7 : 1
 
-  // Get consumption per m²
-  const consumptionData = CALCULATION_DATA.consumption[defaultBuildingPeriod]
-  let consumptionPerM2
+  // Debug logging
+  console.log('Calculator inputs:', {
+    heatingType: heatingTypeValue,
+    buildingPeriod: ageValue,
+    renovated: defaultRenovated,
+    retrofitValue,
+    size
+  })
 
-  if (!consumptionData) {
-    // Fallback to default consumption values
-    consumptionPerM2 = defaultRenovated ? 110 : 160
-  } else {
-    consumptionPerM2 = defaultRenovated ? consumptionData.renovated : consumptionData.base
-  }
+  // Old calculator formulas (exactly as in the HTML):
+  // Energy Savings: [age] * [area] * [heatingtype1] * [retrofit1] * 0.25
+  const energySavings = ageValue * size * heatingTypeValue * retrofitValue * 0.25
 
-  // Calculate total energy consumption
-  const totalConsumption = size * consumptionPerM2 // kWh/year
+  // Investment Cost: [area] / 15 * 150
+  const investmentCost = (size / 15) * 150
 
-  // Calculate number of viboo devices needed
-  const numberOfDevices = Math.ceil(size * CALCULATION_DATA.viboo.devicesPerM2)
+  // Yearly Cost (subscription): [area] / 15 * 18
+  const yearlyCost = (size / 15) * 18
 
-  // Calculate investment cost
-  const investmentCost = numberOfDevices * CALCULATION_DATA.viboo.costPerDevice
-
-  // Calculate annual subscription cost
-  const annualSubscription = numberOfDevices * CALCULATION_DATA.viboo.subscriptionPerDevice
-
-  // Calculate energy savings
-  const energySavings = totalConsumption * CALCULATION_DATA.viboo.energySavingsPercent // kWh/year
-  const energySavingsCost = energySavings * pricePerKWh // CHF/year
-
-  // Calculate net annual savings (energy savings minus subscription)
-  let netAnnualSavings = energySavingsCost - annualSubscription
-
-  // Adjustment factor to match expected results
-  // For the reference case (10000m², Gas, vor 1920, no renovation):
-  // Expected: 75,600 CHF savings, 1.13 years amortization
-  const adjustmentFactor = 1.01 // Fine-tune to match expected values
-  netAnnualSavings = netAnnualSavings * adjustmentFactor
-
-  // Calculate amortization time
+  // Amortization: [investmentcost] / ([energysavings] - [yearlycost])
+  const netAnnualSavings = energySavings - yearlyCost
   const amortizationYears = netAnnualSavings > 0 ? investmentCost / netAnnualSavings : 0.0
+
+  console.log('Calculator results:', {
+    energySavings,
+    investmentCost,
+    yearlyCost,
+    netAnnualSavings,
+    amortizationYears: amortizationYears.toFixed(1)
+  })
 
   return {
     amortizationYears: Math.max(0.1, amortizationYears),
-    annualSavings: Math.max(0, netAnnualSavings),
+    annualSavings: Math.max(0, energySavings), // Display gross energy savings, not net
+    netSavings: Math.max(0, netAnnualSavings), // Keep net for calculation reference
   }
 }
 
@@ -270,6 +325,12 @@ function cleanup() {
   const selectElement = document.querySelector('[data-anm-calculator="select"]')
   if (selectElement) {
     selectElement.removeEventListener('change', handleSelectChange)
+  }
+
+  const rangeInput = document.querySelector('[data-anm-calculator="range-slider-input"]')
+  if (rangeInput) {
+    rangeInput.removeEventListener('input', handleRangeInputChange)
+    rangeInput.removeEventListener('change', handleRangeInputChange)
   }
 
   ctx && ctx.revert()
