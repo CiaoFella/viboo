@@ -1,5 +1,3 @@
-import { gsap } from '../../vendor.js'
-import { getNextContainer } from '../../utilities/helper.js'
 
 // Configuration constants
 const CONFIG = {
@@ -8,8 +6,8 @@ const CONFIG = {
 }
 
 // Global state
-let ctx
 let lightboxManagers = new Map()
+let globalControlsInitialized = false
 
 // Video Lightbox Manager Class
 class VideoLightboxManager {
@@ -881,54 +879,94 @@ class VideoLightboxManager {
 }
 
 function init() {
-  ctx = gsap.context(() => {
-    initVideoLightboxes()
-    setupGlobalControls()
-  })
+  // Initialize global lightboxes only once (they persist across page transitions)
+  initGlobalLightboxes()
+
+  // Setup global controls if not already done
+  setupGlobalControls()
 }
 
-function initVideoLightboxes() {
-  const container = getNextContainer()
-  container.querySelectorAll('[data-bunny-lightbox-init]').forEach(root => {
+function initGlobalLightboxes() {
+  // Only look for lightbox elements outside the Barba container (global elements)
+  const globalLightboxes = document.querySelectorAll('[data-bunny-lightbox-init]')
+
+  if (globalLightboxes.length === 0) {
+    console.warn('No video lightbox elements found with [data-bunny-lightbox-init]')
+    return
+  }
+
+  globalLightboxes.forEach(root => {
+    // Skip if already initialized (persists across page transitions)
+    if (root._videoLightboxManager) {
+      return
+    }
+
     const manager = new VideoLightboxManager(root)
     lightboxManagers.set(root, manager)
     root._videoLightboxManager = manager // Store reference for cleanup
   })
+
 }
 
 function setupGlobalControls() {
-  // Global open/close controls + ESC
+  // Only set up global controls once
+  if (globalControlsInitialized) {
+    return
+  }
+  globalControlsInitialized = true
+
+  // Single capture phase listener to handle everything
   document.addEventListener('click', (e) => {
-    const openBtn = e.target.closest('[data-bunny-lightbox-control="open"]')
+    // Check if the clicked element or any parent has the lightbox control
+    const clickedElement = e.target
+    const openBtn = clickedElement.closest('[data-bunny-lightbox-control="open"]')
+
     if (openBtn) {
+      // Always prevent default for links/buttons inside lightbox controls
+      const isLink = clickedElement.tagName === 'A' || clickedElement.closest('a')
+      const isButton = clickedElement.tagName === 'BUTTON' || clickedElement.closest('button')
+
+      if (isLink || isButton) {
+        e.preventDefault()
+      }
+
+      // Don't stop propagation, but handle the lightbox opening here
       const src = openBtn.getAttribute('data-bunny-lightbox-src') || ''
-      if (!src) return
+      if (!src) {
+        console.warn('No video source found on lightbox control button')
+        return
+      }
 
       const imgEl = openBtn.querySelector('[data-bunny-lightbox-placeholder]')
       const placeholderUrl = imgEl ? imgEl.getAttribute('src') : ''
 
       // Find the corresponding lightbox manager
-      // Check if button has a target attribute to specify which lightbox
       const targetId = openBtn.getAttribute('data-bunny-lightbox-target')
       let player
 
       if (targetId) {
-        // If target is specified, find that specific lightbox
         player = document.querySelector(`[data-bunny-lightbox-init][data-bunny-lightbox-id="${targetId}"]`)
       } else {
-        // Otherwise, find the first available lightbox
         player = document.querySelector('[data-bunny-lightbox-init]')
+      }
+
+      if (!player) {
+        console.error('No video lightbox player found in the DOM')
+        return
       }
 
       const manager = player?._videoLightboxManager
       if (manager) {
         manager.openLightbox(src, placeholderUrl)
+      } else {
+        console.error('Video lightbox manager not initialized on player element')
       }
       return
     }
 
     const closeBtn = e.target.closest('[data-bunny-lightbox-control="close"]')
     if (closeBtn) {
+      e.preventDefault()
       const wrapper = closeBtn.closest('[data-bunny-lightbox-status]')
       const player = wrapper?.querySelector('[data-bunny-lightbox-init]')
       const manager = player?._videoLightboxManager
@@ -937,7 +975,7 @@ function setupGlobalControls() {
       }
       return
     }
-  })
+  }, true) // Use capture phase to intercept before navigation
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -952,16 +990,18 @@ function setupGlobalControls() {
 }
 
 function cleanup() {
-  // Clean up all lightbox managers
+  // Since lightboxes are global and persist across page transitions,
+  // we only clean up if the element is no longer in the DOM
   lightboxManagers.forEach((manager, root) => {
-    manager.destroy()
-    delete root._videoLightboxManager
+    if (!document.contains(root)) {
+      manager.destroy()
+      delete root._videoLightboxManager
+      lightboxManagers.delete(root)
+    }
   })
-  lightboxManagers.clear()
 
-  if (ctx) {
-    ctx.revert()
-  }
+  // Note: We don't clear all managers or reset globalControlsInitialized
+  // because the lightbox persists across page transitions
 }
 
 export default {
