@@ -72,7 +72,7 @@ function initializeFromHTML() {
   // Select "vor 1920" (200) as default building age
   const selectElement = document.querySelector('[data-anm-calculator="select"]')
   if (selectElement) {
-    selectElement.value = "200"
+    selectElement.value = '200'
   }
 
   // Select "Nein" as default for renovation
@@ -80,8 +80,6 @@ function initializeFromHTML() {
   if (noRenovationRadio) {
     noRenovationRadio.checked = true
   }
-
-  console.log('Initialized with defaults - Gas, vor 1920, Nein, size:', currentInputs.size)
 }
 
 function initializeElements() {
@@ -247,15 +245,6 @@ function calculateResults() {
   const ageValue = parseInt(defaultBuildingPeriod)
   const retrofitValue = defaultRenovated ? 0.7 : 1
 
-  // Debug logging
-  console.log('Calculator inputs:', {
-    heatingType: heatingTypeValue,
-    buildingPeriod: ageValue,
-    renovated: defaultRenovated,
-    retrofitValue,
-    size
-  })
-
   // Old calculator formulas (exactly as in the HTML):
   // Energy Savings: [age] * [area] * [heatingtype1] * [retrofit1] * 0.25
   const energySavings = ageValue * size * heatingTypeValue * retrofitValue * 0.25
@@ -269,14 +258,6 @@ function calculateResults() {
   // Amortization: [investmentcost] / ([energysavings] - [yearlycost])
   const netAnnualSavings = energySavings - yearlyCost
   const amortizationYears = netAnnualSavings > 0 ? investmentCost / netAnnualSavings : 0.0
-
-  console.log('Calculator results:', {
-    energySavings,
-    investmentCost,
-    yearlyCost,
-    netAnnualSavings,
-    amortizationYears: amortizationYears.toFixed(1)
-  })
 
   return {
     amortizationYears: Math.max(0.1, amortizationYears),

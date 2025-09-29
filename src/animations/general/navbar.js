@@ -166,9 +166,6 @@ class NavbarManager {
         // If background is DARK (low brightness), we need LIGHT text (add is-light class)
         // If background is LIGHT (high brightness), we need DARK text (don't add is-light class)
         this.updateNavbarTheme(!isLightBackground)
-
-        // Debug logging (remove in production)
-        console.log(`Navbar color detection: scrollY=${window.scrollY}, brightness=${averageBrightness}, threshold=${CONFIG.BRIGHTNESS_THRESHOLD}, isLightBackground=${isLightBackground}, addingLightClass=${!isLightBackground}`)
       }
     } catch (error) {
       console.warn('Color detection error:', error)
