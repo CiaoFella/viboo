@@ -5,6 +5,7 @@ import smoothScroll from './smoothScroll.js'
 import dynamicYear from './dynamicYear.js'
 import navBanner from './navBanner.js'
 import createSplitTexts from './createSplitTexts.js'
+import hubspotCTA from './hubspotCTA.js'
 
 // List of all utility modules
 const UTILITIES = [
@@ -12,6 +13,7 @@ const UTILITIES = [
   dynamicYear,
   navBanner,
   createSplitTexts,
+  hubspotCTA,
 ]
 
 // Global state
