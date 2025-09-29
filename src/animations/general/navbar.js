@@ -80,10 +80,14 @@ class NavbarManager {
         if (self.direction === 1 && self.progress > 0) {
           // Scrolling down - hide navbar
           this.elements.navbar.classList.add('is-hidden')
+          // Also hide mobile container
+          this.elements.navMobileContainer?.classList.add('is-hidden')
           this.elements.logo.classList.add('is-small')
         } else if (self.direction === -1) {
           // Scrolling up - show navbar
           this.elements.navbar.classList.remove('is-hidden')
+          // Also show mobile container
+          this.elements.navMobileContainer?.classList.remove('is-hidden')
           this.elements.logo.classList.remove('is-small')
         }
 
@@ -96,6 +100,7 @@ class NavbarManager {
   resetNavbarState() {
     // Reset to top-of-page state - CSS handles transitions
     this.elements.navbar?.classList.remove('is-hidden')
+    this.elements.navMobileContainer?.classList.remove('is-hidden')
     this.elements.logo?.classList.remove('is-small')
 
     // Set transparency based on current scroll position

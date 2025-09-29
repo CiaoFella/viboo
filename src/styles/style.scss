@@ -92,11 +92,29 @@ html.lenis body {
   }
 }
 
+// Mobile container hide/show animation
+[data-anm-navbar='mobile-container'] {
+  background-color: transparent !important;
+  transform-origin: top center;
+
+  .nav_mobile_contain {
+    background-color: var(--_theme---background) !important;
+    transition: background-color $transition-duration-fast $ease-power2-inOut;
+    border-radius: 1rem;
+  }
+
+  &.is-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
 [data-anm-navbar='container'],
 [data-anm-navbar='mobile-container'] {
   background-color: var(--_theme---background);
   transition: background-color $transition-duration $ease-power2-inOut, color $transition-duration $ease-power2-inOut,
-    backdrop-filter $transition-duration $ease-power2-inOut, max-width $transition-duration $ease-power2-inOut !important;
+    backdrop-filter $transition-duration $ease-power2-inOut, max-width $transition-duration $ease-power2-inOut,
+    transform $transition-duration-fast $ease-power2-inOut, opacity $transition-duration-fast $ease-power2-inOut !important;
 
   &.is-transparent {
     background-color: transparent;
@@ -137,6 +155,43 @@ html.lenis body {
     .nav_desktop_logo,
     .nav_mobile_logo {
       // Add any logo color adjustments for dark backgrounds
+    }
+  }
+}
+
+// Mobile nav specific styling
+@media (max-width: 992px) {
+  .nav_mobile_layout {
+    background-color: transparent !important;
+    color: var(--_theme---text) !important;
+
+    // Apply color to all child elements
+    .nav_mobile_logo,
+    .nav_button_wrap,
+    .nav_button_line {
+      color: var(--_theme---text);
+    }
+  }
+
+  // When navbar has is-light class, apply light color on mobile
+  [data-anm-navbar='mobile-container'].is-light {
+    .nav_mobile_contain {
+      background-color: transparent !important;
+    }
+
+    .nav_mobile_layout {
+      background-color: transparent !important;
+      color: var(--_theme---background) !important;
+
+      .nav_mobile_logo,
+      .nav_button_wrap,
+      .nav_button_line {
+        color: var(--_theme---background);
+      }
+    }
+
+    .nav_mobile_menu_wrap {
+      background-color: var(--_theme---text) !important;
     }
   }
 }
