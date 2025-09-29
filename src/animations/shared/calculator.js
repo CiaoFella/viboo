@@ -2,9 +2,9 @@ import { gsap } from '../../vendor.js'
 
 let ctx
 
-// Calculation constants and data - matching the old calculator exactly
+// Calculation constants and data - configurable via data attributes
 const CALCULATION_DATA = {
-  // Heating type price values (used as multipliers in energy savings formula)
+  // Heating type price values (CHF/kWh)
   heatingTypes: {
     gas: 0.14,
     oil: 0.11,
@@ -12,7 +12,7 @@ const CALCULATION_DATA = {
     'heat-pump': 0.08,
   },
 
-  // Building age values (energy consumption base values)
+  // Building age values (kWh/m²·a)
   buildingAge: {
     1920: 200, // vor 1920
     1950: 140, // 1920-1950
@@ -24,7 +24,15 @@ const CALCULATION_DATA = {
   // Renovation multipliers
   renovation: {
     no: 1, // Nein
-    yes: 0.7, // Ja
+    yes: 0.7, // Ja (Sanierung-Faktor)
+  },
+
+  // Viboo specific constants
+  viboo: {
+    savingsRate: 0.27, // viboo-Sparrate
+    m2PerDevice: 20, // m² pro Gerät
+    deviceCost: 150, // Gerätekosten (CHF)
+    yearlySubscription: 18, // Abo pro Gerät/Jahr (CHF)
   },
 }
 
@@ -46,6 +54,7 @@ const MAX_SIZE = 15000
 
 function init() {
   ctx = gsap.context(() => {
+    loadConfiguration()
     initializeElements()
     setupRangeSlider()
     setupFormHandlers()
@@ -53,6 +62,58 @@ function init() {
     updateSliderPosition()
     updateResults()
   })
+}
+
+// Load configuration from data attributes on the page
+function loadConfiguration() {
+  const configElement = document.querySelector('[data-calculator-config]')
+  if (configElement) {
+    // Load individual heating type values
+    const gasPrice = configElement.getAttribute('data-price-gas')
+    if (gasPrice) CALCULATION_DATA.heatingTypes.gas = parseFloat(gasPrice)
+
+    const oilPrice = configElement.getAttribute('data-price-oil')
+    if (oilPrice) CALCULATION_DATA.heatingTypes.oil = parseFloat(oilPrice)
+
+    const districtHeatingPrice = configElement.getAttribute('data-price-district-heating')
+    if (districtHeatingPrice) CALCULATION_DATA.heatingTypes['district-heating'] = parseFloat(districtHeatingPrice)
+
+    const heatPumpPrice = configElement.getAttribute('data-price-heat-pump')
+    if (heatPumpPrice) CALCULATION_DATA.heatingTypes['heat-pump'] = parseFloat(heatPumpPrice)
+
+    // Load building age consumption values
+    const age1920 = configElement.getAttribute('data-consumption-1920')
+    if (age1920) CALCULATION_DATA.buildingAge[1920] = parseFloat(age1920)
+
+    const age1950 = configElement.getAttribute('data-consumption-1950')
+    if (age1950) CALCULATION_DATA.buildingAge[1950] = parseFloat(age1950)
+
+    const age1980 = configElement.getAttribute('data-consumption-1980')
+    if (age1980) CALCULATION_DATA.buildingAge[1980] = parseFloat(age1980)
+
+    const age2000 = configElement.getAttribute('data-consumption-2000')
+    if (age2000) CALCULATION_DATA.buildingAge[2000] = parseFloat(age2000)
+
+    const age2020 = configElement.getAttribute('data-consumption-2020')
+    if (age2020) CALCULATION_DATA.buildingAge[2020] = parseFloat(age2020)
+
+    // Load viboo configuration
+    const vibooSavingsRate = configElement.getAttribute('data-viboo-savings-rate')
+    if (vibooSavingsRate) CALCULATION_DATA.viboo.savingsRate = parseFloat(vibooSavingsRate)
+
+    const vibooM2PerDevice = configElement.getAttribute('data-viboo-m2-per-device')
+    if (vibooM2PerDevice) CALCULATION_DATA.viboo.m2PerDevice = parseFloat(vibooM2PerDevice)
+
+    const vibooDeviceCost = configElement.getAttribute('data-viboo-device-cost')
+    if (vibooDeviceCost) CALCULATION_DATA.viboo.deviceCost = parseFloat(vibooDeviceCost)
+
+    const vibooYearlySubscription = configElement.getAttribute('data-viboo-yearly-subscription')
+    if (vibooYearlySubscription) CALCULATION_DATA.viboo.yearlySubscription = parseFloat(vibooYearlySubscription)
+
+    // Load renovation factor
+    const renovationFactor = configElement.getAttribute('data-renovation-factor')
+    if (renovationFactor) CALCULATION_DATA.renovation.yes = parseFloat(renovationFactor)
+  }
 }
 
 function initializeFromHTML() {
@@ -150,7 +211,9 @@ function stopDragging() {
 }
 
 function updateSliderValue(percentage) {
-  const size = Math.round(MIN_SIZE + (MAX_SIZE - MIN_SIZE) * percentage)
+  const rawSize = MIN_SIZE + (MAX_SIZE - MIN_SIZE) * percentage
+  // Round to nearest 5m² step
+  const size = Math.round(rawSize / 5) * 5
   currentInputs.size = size
 
   updateSliderPosition()
@@ -217,7 +280,9 @@ function handleSelectChange(e) {
 function handleRangeInputChange(e) {
   // Handle the new number input for building size
   const value = parseInt(e.target.value) || 0
-  currentInputs.size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, value)) // Enforce min/max limits
+  // Round to nearest 5m² step
+  const roundedValue = Math.round(value / 5) * 5
+  currentInputs.size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, roundedValue)) // Enforce min/max limits
 
   // Update the visual slider position to match
   updateSliderPosition()
@@ -240,24 +305,38 @@ function calculateResults() {
   const defaultBuildingPeriod = buildingPeriod || 200
   const defaultRenovated = renovated !== null ? renovated : false
 
-  // Get values exactly as in the old calculator
-  const heatingTypeValue = defaultHeatingType
-  const ageValue = parseInt(defaultBuildingPeriod)
-  const retrofitValue = defaultRenovated ? 0.7 : 1
+  // Get values from configuration
+  const heatingTypeValue = defaultHeatingType // CHF/kWh
+  const ageValue = parseInt(defaultBuildingPeriod) // kWh/m²·a
+  const retrofitValue = defaultRenovated ? CALCULATION_DATA.renovation.yes : CALCULATION_DATA.renovation.no
+  const vibooRate = CALCULATION_DATA.viboo.savingsRate // Always use viboo savings rate
 
-  // Old calculator formulas (exactly as in the HTML):
-  // Energy Savings: [age] * [area] * [heatingtype1] * [retrofit1] * 0.25
-  const energySavings = ageValue * size * heatingTypeValue * retrofitValue * 0.25
+  // Calculate energy consumption and savings
+  // Verbrauch final: ageValue * retrofitValue (kWh/m²·a)
+  const finalConsumption = ageValue * retrofitValue
 
-  // Investment Cost: [area] / 15 * 150
-  const investmentCost = (size / 15) * 150
+  // Annual energy consumption: finalConsumption * size (kWh/Jahr)
+  const annualEnergyConsumption = finalConsumption * size
 
-  // Yearly Cost (subscription): [area] / 15 * 18
-  const yearlyCost = (size / 15) * 18
+  // Annual energy cost without viboo: annualEnergyConsumption * heatingTypeValue (CHF/Jahr)
+  const annualEnergyCost = annualEnergyConsumption * heatingTypeValue
 
-  // Amortization: [investmentcost] / ([energysavings] - [yearlycost])
+  // Energy Savings with viboo: annualEnergyCost * vibooRate
+  const energySavings = annualEnergyCost * vibooRate
+
+  // Number of devices: size / m2PerDevice
+  const numberOfDevices = Math.ceil(size / CALCULATION_DATA.viboo.m2PerDevice)
+
+  // Investment Cost: numberOfDevices * deviceCost
+  const investmentCost = numberOfDevices * CALCULATION_DATA.viboo.deviceCost
+
+  // Yearly subscription: numberOfDevices * yearlySubscription
+  const yearlyCost = numberOfDevices * CALCULATION_DATA.viboo.yearlySubscription
+
+  // Amortization: investmentCost / (energySavings - yearlyCost)
   const netAnnualSavings = energySavings - yearlyCost
   const amortizationYears = netAnnualSavings > 0 ? investmentCost / netAnnualSavings : 0.0
+
 
   return {
     amortizationYears: Math.max(0.1, amortizationYears),
@@ -274,7 +353,7 @@ function updateResults() {
   const moneyElement = document.querySelector('[data-anm-calculator="result-money"]')
 
   if (yearsElement) {
-    yearsElement.textContent = results.amortizationYears.toFixed(1)
+    yearsElement.textContent = results.amortizationYears.toFixed(2)
   }
 
   if (moneyElement) {
