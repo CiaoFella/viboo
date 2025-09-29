@@ -6,6 +6,23 @@
 @import './testimonial-slider.scss';
 @import './variables.scss';
 
+[data-anm-case-studies='teaser'] .swiper-wrapper {
+  -webkit-transition-timing-function: linear !important;
+  transition-timing-function: linear !important;
+}
+
+[data-anm-case-studies='teaser'] .swiper-slide {
+  img {
+    transition: scale $transition-duration-fast $ease-power2-inOut;
+  }
+
+  &:hover {
+    img {
+      scale: 1.05;
+    }
+  }
+}
+
 // Calculator range slider styles
 .g_range_slider_wrap {
   cursor: pointer;

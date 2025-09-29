@@ -7,8 +7,7 @@
   pointer-events: none;
   will-change: transform;
   transition: opacity 0.3s, color 0.4s;
-  color: white;
-  mix-blend-mode: exclusion;
+  color: var(--_theme---text);
 
   &:before {
     content: '';
@@ -54,11 +53,11 @@
 
   &.-pointer:before {
     transform: scale(0.4);
-    opacity: 0.75;
+    opacity: 0.5;
   }
 
   &.-text:before {
-    opacity: 0.85;
+    opacity: 0.6;
     transform: scale(1.4);
   }
 

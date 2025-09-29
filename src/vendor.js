@@ -8,7 +8,7 @@ import barba from '@barba/core'
 import LocomotiveScroll from 'locomotive-scroll'
 import flickity from 'flickity'
 import Swiper from 'swiper'
-import { Navigation, Pagination } from 'swiper/modules'
+import { Navigation, Pagination, Autoplay, FreeMode } from 'swiper/modules'
 
 gsap.defaults({
   ease: 'power2.inOut',
@@ -30,4 +30,6 @@ export {
   Swiper,
   Navigation,
   Pagination,
+  Autoplay,
+  FreeMode,
 }
