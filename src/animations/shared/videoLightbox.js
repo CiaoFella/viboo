@@ -908,7 +908,18 @@ function setupGlobalControls() {
       const placeholderUrl = imgEl ? imgEl.getAttribute('src') : ''
 
       // Find the corresponding lightbox manager
-      const player = document.querySelector('[data-bunny-lightbox-init]')
+      // Check if button has a target attribute to specify which lightbox
+      const targetId = openBtn.getAttribute('data-bunny-lightbox-target')
+      let player
+
+      if (targetId) {
+        // If target is specified, find that specific lightbox
+        player = document.querySelector(`[data-bunny-lightbox-init][data-bunny-lightbox-id="${targetId}"]`)
+      } else {
+        // Otherwise, find the first available lightbox
+        player = document.querySelector('[data-bunny-lightbox-init]')
+      }
+
       const manager = player?._videoLightboxManager
       if (manager) {
         manager.openLightbox(src, placeholderUrl)
