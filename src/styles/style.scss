@@ -210,6 +210,21 @@ html.lenis body {
     .nav_mobile_menu_wrap {
       background-color: var(--_theme---text) !important;
     }
+
+    // Override dropdown colors for mobile when is-light
+    .nav_dropdown_main_wrap,
+    .nav_dropdown_mega_wrap {
+      color: inherit !important;
+
+      .nav_dropdown_text,
+      .nav_dropdown_mega_headline {
+        color: inherit !important;
+      }
+
+      .nav_dropdown_mega_card {
+        color: var(--_theme---text) !important;
+      }
+    }
   }
 }
 
