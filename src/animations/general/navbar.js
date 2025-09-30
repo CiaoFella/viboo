@@ -143,11 +143,15 @@ class NavbarManager {
         return
       }
 
-      const navbarRect = this.elements.navbar.getBoundingClientRect()
+      // Get the active container based on screen size
+      const targetContainer = this.getTargetContainer()
+      if (!targetContainer) return
+
+      const containerRect = targetContainer.getBoundingClientRect()
       const samplePoints = [
-        { x: navbarRect.left + navbarRect.width * 0.25, y: navbarRect.bottom + 10 },
-        { x: navbarRect.left + navbarRect.width * 0.5, y: navbarRect.bottom + 10 },
-        { x: navbarRect.left + navbarRect.width * 0.75, y: navbarRect.bottom + 10 },
+        { x: containerRect.left + containerRect.width * 0.25, y: containerRect.bottom + 10 },
+        { x: containerRect.left + containerRect.width * 0.5, y: containerRect.bottom + 10 },
+        { x: containerRect.left + containerRect.width * 0.75, y: containerRect.bottom + 10 },
       ]
 
       let totalBrightness = 0
@@ -155,7 +159,8 @@ class NavbarManager {
 
       samplePoints.forEach(point => {
         const element = document.elementFromPoint(point.x, point.y)
-        if (element && element !== this.elements.navbar && !this.elements.navbar.contains(element)) {
+        // Check against the active container, not just navbar
+        if (element && element !== targetContainer && !targetContainer.contains(element)) {
           const brightness = this.getElementBrightness(element, point)
           if (brightness !== null) {
             totalBrightness += brightness
