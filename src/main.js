@@ -67,7 +67,6 @@ function loadPageModule(pageName) {
   import(/* webpackIgnore: true */ `${baseUrl}pages/${pageName}.js`)
     .then(module => {
       currentAnimationModule = module.default || {}
-      // console.log(`${baseUrl}pages/${pageName}.js`)
       if (typeof currentAnimationModule.init === 'function') {
         currentAnimationModule.init()
       } else {

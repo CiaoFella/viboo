@@ -24,5 +24,3 @@ process.on('SIGINT', () => {
   srcWatch.kill();
   process.exit();
 });
-
-console.log('Watching SASS files for changes...');

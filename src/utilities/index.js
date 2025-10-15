@@ -35,7 +35,6 @@ function init() {
     })
 
     isInitialized = true
-    console.log('All utilities initialized successfully')
   } catch (error) {
     console.error('Error initializing utilities:', error)
   }
@@ -55,7 +54,6 @@ function cleanup() {
     })
 
     isInitialized = false
-    console.log('All utilities cleaned up successfully')
   } catch (error) {
     console.error('Error cleaning up utilities:', error)
   }

@@ -19,21 +19,11 @@ function hasHubSpotCookies() {
 function handleCTAClick(e) {
   // Only prevent default if HubSpot cookies are present
   if (!hasHubSpotCookies()) {
-    console.log('HubSpot cookies not found - allowing normal link behavior')
     return
   }
 
   e.preventDefault()
   e.stopPropagation()
-
-  const target = e.currentTarget
-  console.log('HubSpot CTA triggered (cookies present):', target)
-
-  // Check if clicked element or current target has href
-  const href = target.href || target.querySelector('a')?.href
-  if (href) {
-    console.log('Prevented navigation to:', href)
-  }
 }
 
 function init() {
@@ -56,7 +46,6 @@ function init() {
         }
         e.preventDefault()
         e.stopPropagation()
-        console.log('Prevented child link navigation (cookies present):', link.href)
       }
       link.addEventListener('click', linkHandler, true)
       listeners.push({ element: link, handler: linkHandler, capture: true })
@@ -70,17 +59,11 @@ function init() {
         }
         e.preventDefault()
         e.stopPropagation()
-        console.log('Prevented child button action (cookies present)')
       }
       button.addEventListener('click', buttonHandler, true)
       listeners.push({ element: button, handler: buttonHandler, capture: true })
     })
   })
-
-  if (ctaElements.length > 0) {
-    const cookieStatus = hasHubSpotCookies() ? 'cookies present' : 'cookies not present'
-    console.log(`HubSpot CTA: Initialized ${ctaElements.length} trigger buttons (${cookieStatus})`)
-  }
 }
 
 function cleanup() {
@@ -88,7 +71,6 @@ function cleanup() {
     element.removeEventListener('click', handler, capture)
   })
   listeners = []
-  console.log('HubSpot CTA: Cleaned up event listeners')
 }
 
 export default {
