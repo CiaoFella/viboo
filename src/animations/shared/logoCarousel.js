@@ -144,11 +144,16 @@ class LogoCarouselManager {
         newImg.className = currentImg?.className || 'u-contain-absolute'
         newImg.loading = 'lazy'
 
-        // Set initial state for new image
+        // Set initial state for new image - positioned absolutely to prevent layout shift
         gsap.set(newImg, {
           yPercent: 100,
           autoAlpha: 0,
           filter: 'blur(5px)',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
         })
 
         // Add new image to target container
@@ -156,6 +161,15 @@ class LogoCarouselManager {
 
         // Animate out current image if it exists
         if (currentImg) {
+          // Ensure current image is absolutely positioned before animation
+          gsap.set(currentImg, {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+          })
+
           cycleTl.to(
             currentImg,
             {
